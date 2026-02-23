@@ -31,5 +31,12 @@
         <button onclick="location.href='home.html'">Back to Home</button>
     </div>
     <script src="script.js"></script>
+    <script>
+        initializeUsers();
+        if (!sessionStorage.getItem('currentUser')) {
+            location.href = 'index.html';
+        }
+        loadStorage();
+    </script>
 </body>
 </html>
