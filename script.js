@@ -121,16 +121,23 @@ async function getGeminiExamples(word) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{
-          parts: [{ text: `Give me 2 simple example sentences using the word "${word}". Just the sentences, one per line, no numbering.` }]
+          parts: [{ text: `Provide exactly 2 example sentences using the word "${word}" in proper context. Write only the sentences, one per line, without numbering or extra text.` }]
         }]
       })
     });
     const data = await response.json();
-    const text = data.candidates[0].content.parts[0].text;
-    const examples = text.split('\n').filter(l => l.trim()).slice(0, 2);
-    return [examples[0] || `Example with ${word}.`, examples[1] || `Another example with ${word}.`];
-  } catch {
-    return [`Example with ${word}.`, `Another example with ${word}.`];
+    const text = data.candidates[0].content.parts[0].text.trim();
+    const lines = text.split('\n').map(l => l.trim().replace(/^[0-9]+[.)\s]+/, '')).filter(l => l.length > 0);
+    return [
+      lines[0] || `I need to check the ${word} before proceeding.`,
+      lines[1] || `The ${word} was very helpful for my work.`
+    ];
+  } catch (error) {
+    console.error('Gemini API error:', error);
+    return [
+      `I need to check the ${word} before proceeding.`,
+      `The ${word} was very helpful for my work.`
+    ];
   }
 }
 
