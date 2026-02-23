@@ -77,15 +77,24 @@ async function searchWord() {
     const definition = meaning.definitions[0].definition;
     const synonyms = meaning.synonyms?.slice(0, 3).join(', ') || 'N/A';
     
-    // Collect examples from dictionary
-    let example1 = meaning.definitions[0].example || null;
-    let example2 = meaning.definitions[1]?.example || null;
+    // Collect all available examples from dictionary
+    let examples = [];
+    for (let m of entry.meanings) {
+      for (let def of m.definitions) {
+        if (def.example) examples.push(def.example);
+        if (examples.length >= 2) break;
+      }
+      if (examples.length >= 2) break;
+    }
     
-    // If examples not found, use Gemini API
+    let example1 = examples[0] || null;
+    let example2 = examples[1] || null;
+    
+    // If still missing examples, fetch from alternative sources
     if (!example1 || !example2) {
-      const geminiExamples = await getGeminiExamples(word);
-      example1 = example1 || geminiExamples[0];
-      example2 = example2 || geminiExamples[1];
+      const additionalExamples = await getExamplesFromAPIs(word);
+      example1 = example1 || additionalExamples[0] || 'No example available';
+      example2 = example2 || additionalExamples[1] || 'No example available';
     }
     
     // Translate to Telugu using Google Translate
@@ -114,31 +123,34 @@ async function searchWord() {
   }
 }
 
-async function getGeminiExamples(word) {
+async function getExamplesFromAPIs(word) {
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCNaNFBkwjuECx7__S9U74qePphKhhrR2M`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{ text: `Provide exactly 2 example sentences using the word "${word}" in proper context. Write only the sentences, one per line, without numbering or extra text.` }]
-        }]
-      })
-    });
-    const data = await response.json();
-    const text = data.candidates[0].content.parts[0].text.trim();
-    const lines = text.split('\n').map(l => l.trim().replace(/^[0-9]+[.)\s]+/, '')).filter(l => l.length > 0);
-    return [
-      lines[0] || `I need to check the ${word} before proceeding.`,
-      lines[1] || `The ${word} was very helpful for my work.`
-    ];
-  } catch (error) {
-    console.error('Gemini API error:', error);
-    return [
-      `I need to check the ${word} before proceeding.`,
-      `The ${word} was very helpful for my work.`
-    ];
+    // Try WordsAPI via RapidAPI alternative - using free Linguatools API
+    const response = await fetch(`https://api.linguatools.org/v1/sentences/en/${word}?limit=2`);
+    if (response.ok) {
+      const data = await response.json();
+      if (data.sentences && data.sentences.length > 0) {
+        return data.sentences.slice(0, 2).map(s => s.text);
+      }
+    }
+  } catch (e) {
+    console.log('Linguatools failed:', e);
   }
+  
+  try {
+    // Try Wordnik API (free tier)
+    const response = await fetch(`https://api.wordnik.com/v4/word.json/${word}/examples?includeDuplicates=false&useCanonical=false&limit=2&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5`);
+    if (response.ok) {
+      const data = await response.json();
+      if (data.examples && data.examples.length > 0) {
+        return data.examples.slice(0, 2).map(e => e.text);
+      }
+    }
+  } catch (e) {
+    console.log('Wordnik failed:', e);
+  }
+  
+  return [null, null];
 }
 
 function parseAndDisplay(text, word) {
