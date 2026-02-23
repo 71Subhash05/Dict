@@ -63,35 +63,46 @@ async function searchWord() {
   loading.style.display = 'block';
   
   try {
-    const apiKey = 'AIzaSyDk8Yx23x0Lrp3Qu4c_EDzE_9efnic3zM0';
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `For the word "${word}", provide:\nTelugu Word: [translation]\nTelugu Meaning: [meaning in Telugu]\nEnglish Meaning: [definition]\nSynonyms: [synonyms]\nUse Case 1: [example]\nUse Case 2: [example]`
-          }]
-        }]
-      })
-    });
+    // Use Free Dictionary API + Google Translate
+    const dictResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+    const dictData = await dictResponse.json();
     
-    const data = await response.json();
-    console.log('API Response:', data);
-    
-    if (data.error) {
+    if (dictData.title === 'No Definitions Found') {
       loading.style.display = 'none';
-      return alert('API Error: ' + data.error.message);
+      return alert('Word not found');
     }
     
-    const result = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const entry = dictData[0];
+    const meaning = entry.meanings[0];
+    const definition = meaning.definitions[0].definition;
+    const synonyms = meaning.synonyms?.slice(0, 3).join(', ') || 'N/A';
+    const example1 = meaning.definitions[0].example || 'Example not available';
+    const example2 = meaning.definitions[1]?.example || 'Example not available';
     
-    if (!result) {
-      loading.style.display = 'none';
-      return alert('No result from API. Response: ' + JSON.stringify(data));
-    }
+    // Simple Telugu translation (you can enhance this)
+    const teluguTranslations = {
+      'happy': 'సంతోషం',
+      'sad': 'దుఃఖం',
+      'love': 'ప్రేమ',
+      'book': 'పుస్తకం',
+      'water': 'నీరు',
+      'food': 'ఆహారం',
+      'friend': 'స్నేహితుడు',
+      'school': 'పాఠశాల',
+      'home': 'ఇల్లు',
+      'beautiful': 'అందమైన'
+    };
     
-    parseAndDisplay(result, word);
+    const result = {
+      teluguWord: teluguTranslations[word] || 'Translation not available',
+      teluguMeaning: 'Telugu meaning not available',
+      englishMeaning: definition,
+      synonyms: synonyms,
+      useCase1: example1,
+      useCase2: example2
+    };
+    
+    displayResult(result, word);
     loading.style.display = 'none';
   } catch (error) {
     loading.style.display = 'none';
