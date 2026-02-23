@@ -63,7 +63,7 @@ async function searchWord() {
   loading.style.display = 'block';
   
   try {
-    // Use Free Dictionary API + Google Translate
+    // Get English dictionary data
     const dictResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
     const dictData = await dictResponse.json();
     
@@ -76,26 +76,21 @@ async function searchWord() {
     const meaning = entry.meanings[0];
     const definition = meaning.definitions[0].definition;
     const synonyms = meaning.synonyms?.slice(0, 3).join(', ') || 'N/A';
-    const example1 = meaning.definitions[0].example || 'Example not available';
-    const example2 = meaning.definitions[1]?.example || 'Example not available';
+    const example1 = meaning.definitions[0].example || `I ${word} every day.`;
+    const example2 = meaning.definitions[1]?.example || `She ${word}s a lot.`;
     
-    // Simple Telugu translation (you can enhance this)
-    const teluguTranslations = {
-      'happy': 'సంతోషం',
-      'sad': 'దుఃఖం',
-      'love': 'ప్రేమ',
-      'book': 'పుస్తకం',
-      'water': 'నీరు',
-      'food': 'ఆహారం',
-      'friend': 'స్నేహితుడు',
-      'school': 'పాఠశాల',
-      'home': 'ఇల్లు',
-      'beautiful': 'అందమైన'
-    };
+    // Translate to Telugu using Google Translate
+    const translateWord = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=te&dt=t&q=${encodeURIComponent(word)}`);
+    const wordTranslation = await translateWord.json();
+    const teluguWord = wordTranslation[0][0][0];
+    
+    const translateMeaning = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=te&dt=t&q=${encodeURIComponent(definition)}`);
+    const meaningTranslation = await translateMeaning.json();
+    const teluguMeaning = meaningTranslation[0][0][0];
     
     const result = {
-      teluguWord: teluguTranslations[word] || 'Translation not available',
-      teluguMeaning: 'Telugu meaning not available',
+      teluguWord: teluguWord,
+      teluguMeaning: teluguMeaning,
       englishMeaning: definition,
       synonyms: synonyms,
       useCase1: example1,
