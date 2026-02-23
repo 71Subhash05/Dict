@@ -27,7 +27,6 @@ git push -u origin main
 2. Import GitHub repository
 3. Add Environment Variable:
    - Key: `GEMINI_API_KEY`
-   - Value: `AIzaSyCNaNFBkwjuECx7__S9U74qePphKhhrR2M`
 4. Deploy
 
 ## Login
