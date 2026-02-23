@@ -70,5 +70,12 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        initializeUsers();
+        if (sessionStorage.getItem('currentUser') !== 'ADMIN') {
+            location.href = 'index.html';
+        }
+        loadUsers();
+    </script>
 </body>
 </html>
