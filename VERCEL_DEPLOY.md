@@ -43,7 +43,6 @@ After deployment completes:
 - Go to **Settings** → **Environment Variables**
 - Click **"Add New"**
 - **Name**: `GEMINI_API_KEY`
-- **Value**: `AIzaSyCNaNFBkwjuECx7__S9U74qePphKhhrR2M`
 - Select: **Production**, **Preview**, **Development**
 - Click **"Save"**
 
@@ -69,8 +68,8 @@ https://your-project-name.vercel.app
 1. Open the Vercel URL
 2. Wait 3 seconds (auto-redirect)
 3. Login:
-   - Username: `23481A5467`
-   - Password: `23481A5467`
+   - Username: 
+   - Password: 
 4. Search any word (e.g., "happy")
 5. Check storage with password
 
@@ -79,7 +78,7 @@ https://your-project-name.vercel.app
 ## Admin Access
 
 - Click **ADMIN** button on login page
-- Password: `BHARATHI`
+
 
 ---
 
