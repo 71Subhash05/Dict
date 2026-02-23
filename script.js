@@ -75,8 +75,8 @@ async function searchWord() {
       data = await response.json();
     } catch (e) {
       // Fallback to direct Gemini API (for local testing)
-      const apiKey = 'AIzaSyCNaNFBkwjuECx7__S9U74qePphKhhrR2M';
-      response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+      const apiKey = 'AIzaSyBPaKbPa1q9fYZZ6S7keZsmAToC1zRt6mE';
+      response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
