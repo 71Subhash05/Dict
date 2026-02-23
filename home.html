@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Dictionary</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="home-page">
+    <nav class="navbar">
+        <button onclick="location.href='profile.html'">👤 Profile</button>
+        <button onclick="openChangePassword()">🔄 Change Password</button>
+    </nav>
+
+    <div class="home-container">
+        <div class="search-section">
+            <h1>Dictionary</h1>
+            <input type="text" id="searchWord" placeholder="Enter English Word">
+            <button onclick="searchWord()">Submit</button>
+            <div class="loading" id="loading">Searching...</div>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div class="result-card">
+                <div class="result-item"><strong>Telugu Word:</strong> <span id="teluguWord"></span></div>
+                <div class="result-item"><strong>Telugu Meaning:</strong> <span id="teluguMeaning"></span></div>
+                <div class="result-item"><strong>English Meaning:</strong> <span id="englishMeaning"></span></div>
+                <div class="result-item"><strong>Synonyms:</strong> <span id="synonyms"></span></div>
+                <div class="result-item"><strong>Use Case 1:</strong> <span id="useCase1"></span></div>
+                <div class="result-item"><strong>Use Case 2:</strong> <span id="useCase2"></span></div>
+            </div>
+        </div>
+
+        <button class="storage-btn" onclick="openStorage()">🔘 STORAGE</button>
+    </div>
+
+    <div class="modal" id="storageModal">
+        <div class="modal-content">
+            <h3>Enter Password</h3>
+            <input type="password" id="storagePassword" placeholder="Password">
+            <div class="modal-buttons">
+                <button onclick="verifyStorage()">Submit</button>
+                <button onclick="closeModal('storageModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="changePasswordModal">
+        <div class="modal-content">
+            <h3>Change Password</h3>
+            <input type="password" id="oldPassword" placeholder="Old Password">
+            <input type="password" id="newPassword" placeholder="New Password">
+            <input type="password" id="confirmPassword" placeholder="Confirm Password">
+            <div class="modal-buttons">
+                <button onclick="changePassword()">Submit</button>
+                <button onclick="closeModal('changePasswordModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

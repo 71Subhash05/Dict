@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - BHARATHI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-page">
+    <div class="sidebar">
+        <h2>👑 BHARATHI</h2>
+        <button onclick="showSection('users')">View All Users</button>
+        <button onclick="showSection('addUser')">➕ Add User</button>
+        <button onclick="showSection('logs')">View Search Logs</button>
+        <button onclick="location.href='home.html'">Back to Home</button>
+    </div>
+
+    <div class="main-content">
+        <div id="users" class="section">
+            <h1>All Users</h1>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Password</th>
+                            <th>Total Searches</th>
+                            <th>Last Login</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="addUser" class="section" style="display:none;">
+            <h1>Add New User</h1>
+            <div class="form-container">
+                <input type="text" id="newRollNumber" placeholder="Roll Number">
+                <input type="password" id="newUserPassword" placeholder="Password">
+                <button onclick="addNewUser()">Add User</button>
+            </div>
+        </div>
+
+        <div id="logs" class="section" style="display:none;">
+            <h1>All Search Logs</h1>
+            <button onclick="clearAllLogs()" class="danger-btn">Clear All Logs</button>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Word</th>
+                            <th>Telugu Word</th>
+                            <th>Telugu Meaning</th>
+                            <th>English Meaning</th>
+                            <th>Synonyms</th>
+                            <th>Use Case 1</th>
+                            <th>Use Case 2</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

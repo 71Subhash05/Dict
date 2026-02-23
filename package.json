@@ -1,0 +1,13 @@
+{
+  "name": "dictionary",
+  "version": "1.0.0",
+  "description": "English to Telugu Dictionary",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.x"
+  }
+}
