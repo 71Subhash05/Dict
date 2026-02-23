@@ -77,18 +77,25 @@ async function searchWord() {
     });
     
     const data = await response.json();
+    console.log('API Response:', data);
+    
+    if (data.error) {
+      loading.style.display = 'none';
+      return alert('API Error: ' + data.error.message);
+    }
+    
     const result = data.candidates?.[0]?.content?.parts?.[0]?.text;
     
     if (!result) {
       loading.style.display = 'none';
-      return alert('API Error. Please enable Generative Language API at: https://console.cloud.google.com/apis/library/generativelanguage.googleapis.com');
+      return alert('No result from API. Response: ' + JSON.stringify(data));
     }
     
     parseAndDisplay(result, word);
     loading.style.display = 'none';
   } catch (error) {
     loading.style.display = 'none';
-    alert('Error: ' + error.message + '\n\nPlease enable Generative Language API');
+    alert('Error: ' + error.message);
   }
 }
 
