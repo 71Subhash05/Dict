@@ -63,41 +63,32 @@ async function searchWord() {
   loading.style.display = 'block';
   
   try {
-    let response, data;
-    
-    // Try API route first (for Vercel)
-    try {
-      response = await fetch('/api/dictionary', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ word })
-      });
-      data = await response.json();
-    } catch (e) {
-      // Fallback to direct Gemini API (for local testing)
-      const apiKey = 'AIzaSyBPaKbPa1q9fYZZ6S7keZsmAToC1zRt6mE';
-      response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `For the word "${word}", provide:\nTelugu Word: [translation]\nTelugu Meaning: [meaning in Telugu]\nEnglish Meaning: [definition]\nSynonyms: [synonyms]\nUse Case 1: [example]\nUse Case 2: [example]`
-            }]
+    const apiKey = 'AIzaSyDk8Yx23x0Lrp3Qu4c_EDzE_9efnic3zM0';
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: `For the word "${word}", provide:\nTelugu Word: [translation]\nTelugu Meaning: [meaning in Telugu]\nEnglish Meaning: [definition]\nSynonyms: [synonyms]\nUse Case 1: [example]\nUse Case 2: [example]`
           }]
-        })
-      });
-      data = await response.json();
-      data.result = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        }]
+      })
+    });
+    
+    const data = await response.json();
+    const result = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    
+    if (!result) {
+      loading.style.display = 'none';
+      return alert('API Error. Please enable Generative Language API at: https://console.cloud.google.com/apis/library/generativelanguage.googleapis.com');
     }
     
-    if (!data.result) return alert('No result');
-    
-    parseAndDisplay(data.result, word);
+    parseAndDisplay(result, word);
     loading.style.display = 'none';
   } catch (error) {
     loading.style.display = 'none';
-    alert('Error: ' + error.message);
+    alert('Error: ' + error.message + '\n\nPlease enable Generative Language API');
   }
 }
 
