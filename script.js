@@ -76,8 +76,17 @@ async function searchWord() {
     const meaning = entry.meanings[0];
     const definition = meaning.definitions[0].definition;
     const synonyms = meaning.synonyms?.slice(0, 3).join(', ') || 'N/A';
-    const example1 = meaning.definitions[0].example || `I ${word} every day.`;
-    const example2 = meaning.definitions[1]?.example || `She ${word}s a lot.`;
+    
+    // Collect examples from dictionary
+    let example1 = meaning.definitions[0].example || null;
+    let example2 = meaning.definitions[1]?.example || null;
+    
+    // If examples not found, use Gemini API
+    if (!example1 || !example2) {
+      const geminiExamples = await getGeminiExamples(word);
+      example1 = example1 || geminiExamples[0];
+      example2 = example2 || geminiExamples[1];
+    }
     
     // Translate to Telugu using Google Translate
     const translateWord = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=te&dt=t&q=${encodeURIComponent(word)}`);
@@ -102,6 +111,26 @@ async function searchWord() {
   } catch (error) {
     loading.style.display = 'none';
     alert('Error: ' + error.message);
+  }
+}
+
+async function getGeminiExamples(word) {
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCNaNFBkwjuECx7__S9U74qePphKhhrR2M`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: `Give me 2 simple example sentences using the word "${word}". Just the sentences, one per line, no numbering.` }]
+        }]
+      })
+    });
+    const data = await response.json();
+    const text = data.candidates[0].content.parts[0].text;
+    const examples = text.split('\n').filter(l => l.trim()).slice(0, 2);
+    return [examples[0] || `Example with ${word}.`, examples[1] || `Another example with ${word}.`];
+  } catch {
+    return [`Example with ${word}.`, `Another example with ${word}.`];
   }
 }
 
